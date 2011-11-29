@@ -1,22 +1,23 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2011 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-misc/dzen/dzen-0.8.5.ebuild,v 1.6 2010/06/06 09:49:15 ssuominen Exp $
 
 inherit toolchain-funcs multilib
 
-SLOT="2"
-MY_P="${PN}${SLOT}-${PV}"
+SLOT=0
+MY_P="${PN}2-${PV}-svn"
 
 DESCRIPTION="a general purpose messaging, notification and menuing program for
 X11."
 HOMEPAGE="http://gotmor.googlepages.com/dzen"
-SRC_URI="http://gotmor.googlepages.com/${MY_P}.tar.gz"
+SRC_URI="${MY_P}.tar.gz"
 
 LICENSE="MIT"
-KEYWORDS="amd64 x86"
-IUSE="minimal xinerama xpm"
+KEYWORDS="~amd64 ~x86"
+IUSE="minimal xft xinerama xpm"
 
 RDEPEND="x11-libs/libX11
+	xft? ( x11-libs/libXft )
 	xinerama? ( x11-libs/libXinerama )
 	xpm? ( x11-libs/libXpm )"
 DEPEND="${RDEPEND}
@@ -27,10 +28,6 @@ S=${WORKDIR}/${MY_P}
 src_unpack() {
 	unpack ${A}
 	cd "${S}"
-	sed -i \
-		-e 's:../dzen2:dzen2:' \
-		gadgets/kittscanner.sh || die
-
 	sed -e "s:/usr/local:/usr:g" \
 		-e 's:-Os::g' \
 		-e "s:CFLAGS =:CFLAGS +=:g" \
@@ -39,6 +36,11 @@ src_unpack() {
 		-e "s:/usr/lib :/usr/$(get_libdir):" \
 		-i config.mk gadgets/config.mk || die "sed failed"
 	sed -i -e "/strip/d" Makefile gadgets/Makefile || die "sed failed"
+	if use xft ; then
+		sed -e '/^LIBS/s/$/ `pkg-config --libs xft`/' \
+			-e '/^CFLAGS/s/$/ -DDZEN_XFT `pkg-config --cflags xft`/' \
+			-i config.mk || die "sed failed"
+	fi
 	if use xinerama ; then
 		sed -e "/^LIBS/s/$/\ -lXinerama/" \
 			-e "/^CFLAGS/s/$/\ -DDZEN_XINERAMA/" \
