@@ -22,11 +22,11 @@ RDEPEND="
 	media-libs/libvorbis
 	sys-libs/zlib
 	x11-libs/libXtst
-	>=x11-libs/qt-core-4.5:4[exceptions]
-	>=x11-libs/qt-gui-4.5:4[exceptions]
+	>=x11-libs/qt-core-4.5:4[exceptions,qt3support]
+	>=x11-libs/qt-gui-4.5:4[exceptions,qt3support]
 	>=x11-libs/qt-webkit-4.5:4[exceptions]
 	!kde? ( || (
-		>=x11-libs/qt-phonon-4.5:4[exceptions]
+		>=x11-libs/qt-phonon-4.5:4[exceptions,qt3support]
 		media-libs/phonon
 	) )
 	kde? ( media-libs/phonon )
